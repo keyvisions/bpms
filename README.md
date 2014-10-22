@@ -1,4 +1,4 @@
 bpms
 ====
 
-Business Process Management System
+SQL based BPMS (Business Process Management System) 
