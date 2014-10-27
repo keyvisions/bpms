@@ -4,37 +4,17 @@
     <title>SVG</title>
     <style>
         body { margin: 0; }
-        #bpmn { position:fixed; top:0; left:0; right:0; bottom:0; width: 100%; height: 100%;}
-        #toolbar { position: fixed; z-index:10; top: 0; left: 0; }
-            #toolbar ul { list-style: none; margin:0; padding:1em;}
-            #toolbar li { float: left; padding:3px; cursor: pointer; border: 1px solid #000000; margin: 3px; border-radius: 5px; }
-                #toolbar li:hover { background-color: #000000; color: #FFFFFF; }
-        bpElement { stroke: #000000; stroke-width: 1px; }
     </style>
-    <script src="scripts/jquery-2.1.1.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/styles/bpmn.css" />
+    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
+    <script src="/scripts/bpmn.js"></script>
     <script>
-        var svgNS = "http://www.w3.org/2000/svg";
-
-        function createEvent() {
-            var bpEvent = document.createElementNS(svgNS, "circle"); //to create a circle, for rectamgle use rectangle
-            bpEvent.setAttribute("id", "mycircle");
-            bpEvent.setAttribute("cx", 100);
-            bpEvent.setAttribute("cy", 100);
-            bpEvent.setAttribute("r", 50);
-            bpEvent.addEventListener("click", function (e) { alert(e.currentTarget.id); });
-
-            document.getElementById("graph").appendChild(bpEvent);
-
-        }
-
         $(function () {
-            // Draw axis
-            $("#bpmn").append($("<line xmlns='http://www.w3.org/2000/svg' x1='0' y1='0' x2='0' y2='300' />"));
-            $("#bpmn").append($("<line xmlns='http://www.w3.org/2000/svg' x1='0' y1='300' x2='300' y2='300' />"));
-            $("#bpmn").append($("<svg><circle cx='100' cy='100' r='25' fill='black' /></svg>"));
-
-            //createCircle();
-            $("circle").click(function () { alert("ciccio"); });
+            $("#toolbar li").each(function (index, element) {
+                element.addEventListener("click", bpmn.newElement($(element).data("type"))); 
+            });
         });
     </script>
 </head>
@@ -55,6 +35,10 @@
             <li data-type="textAnnotation" title="Text Annotation">Text Annotation</li>
         </ul>
     </div>
-    <svg id="bpmn" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" />
+    <svg id="bpmn" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <rect x="300" y="300" width="400" height="200">
+            <textAnnotation>This is some text</textAnnotation>
+        </rect>
+    </svg>
 </body>
 </html>

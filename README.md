@@ -1,6 +1,18 @@
 bpms
 ====
 
-SQL based BPMS (Business Process Management System) engine. The process data is XML.
+BPMS (Business Process Management System) includes a process designer based on BPMN, ability to define roles and and associated calendar, data  an engine  .
 
-Processes are modelled as state machines, each state being a task, the transitions can be conditioned by human, automated and temporal inputs.
+BPMN actions:
+Create element
+Delete element
+Move element
+Resize element
+Group element
+Connect element
+Change element subtype
+
+Each activity requires one or more resources to be completed, completion is reached when all the required inputs have been specified.
+An activity is described by a set of data inputs
+
+Resources
