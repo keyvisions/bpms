@@ -1,9 +1,15 @@
 var bpmn = {
     "NS": "http://www.w3.org/2000/svg",
+    "SVG": null,
     "newElement": function(type) {
-        if (this.hasOwnProperty(type))
-            document.getElementById("bpmn").appendChild(this[type]("event1", "start"));
-        else
+        if (this.hasOwnProperty(type)) {
+            var e = document.createElementNS(this.NS, "use");
+            e.setAttributeNS("xlink", "href", "#" + type);
+            e.setAttribute("x", event.x);
+            e.setAttribute("y", event.y);
+            SVG.appendChild(e);
+//            document.getElementById("bpmn").appendChild(this[type]("event1", "start"));
+        } else
             throw("Element not implemented");
     },
     "event": function(name, subtype) {
@@ -28,5 +34,9 @@ var bpmn = {
         bpmnElement.setAttribute("ry", 5);
         bpmnElement.addEventListener("click", function (e) { alert(e.currentTarget.id); });
         return bpmnElement;
+    },
+    "setup": function() {
+        this.SVG = document.getElementById("bpmn");
     }
 };
+bpmn.setup();

@@ -1,0 +1,57 @@
+<?xml-stylesheet type="text/css" href="/styles/bpmn.css" ?>
+<svg xmlns="//www.w3.org/2000/svg" xmlns:xlink="//www.w3.org/1999/xlink">
+    <script type="text/javascript">
+        // <![CDATA[
+        var bpmn = {
+            NS: "http://www.w3.org/2000/svg",
+            SVG: document.getElementById("bpmn"),
+            add: function(event, type) {
+                var e = document.createElementNS(this.NS, "use");
+                e.setAttributeNS("xlink", "href", "#" + type);
+                e.setAttribute("x", event.x);
+                e.setAttribute("y", event.y);
+                SVG.appendChild(e);
+            }
+        };
+        // ]]>
+    </script>
+    <symbol id="event">
+        <circle cx="25" cy="25" r="25" />
+        <circle cx="25" cy="25" r="20" />
+        <text x="0" y="0" >event</text>
+    </symbol>
+    <symbol id="activity">
+        <rect width="100" height="100" rx="5" ry="5" />
+        <text x="0" y="0" >activity</text>
+    </symbol>
+    <symbol id="gateway">
+        <rect width="100" height="100" transform="rotate(45, 50, 50)"/>
+        <text x="0" y="0" >gateway</text>
+    </symbol>
+    <defs>
+        <marker id="markerCircle" markerWidth="8" markerHeight="8" refx="5" refy="5">
+            <circle cx="5" cy="5" r="3"/>
+        </marker>
+        <marker id="markerArrowFilled" markerWidth="13" markerHeight="13" refx="2" refy="6" orient="auto">
+            <path d="M2,2 L2,11 L10,6 L2,2" style="fill: #000000;"/>
+        </marker>
+        <marker id="markerArrowEmpty" markerWidth="13" markerHeight="13" refx="2" refy="6" orient="auto">
+            <path d="M2,2 L2,11 L10,6 L2,2" />
+        </marker>
+        <marker id="markerArrow" markerWidth="13" markerHeight="13" refx="2" refy="6" orient="auto">
+            <path d="M2,2 L2,11 L10,6"/>
+        </marker>
+    </defs>
+    <symbol id="sequenceFlow">
+        <path data="M0,0 L100,100" marker-start: url(#markerCircle); marker-end: url(#markerArrowFilled);/>
+        <text>sequence</text>
+    </symbol>
+    <symbol id="messageFlow">
+        <path data="M0,0 L100,100"  stroke-dasharray: 10 5; marker-start: url(#markerCircle); marker-end: url(#markerArrow);/>
+        <text>sequence</text>
+    </symbol>
+    <symbol id="association">
+        <path data="M0,0 L100,100" stroke-dasharray: 1 1; marker-end: url(#markerArrow);/>
+        <text>sequence</text>
+    </symbol>
+</svg>

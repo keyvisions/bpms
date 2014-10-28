@@ -15,4 +15,8 @@ Change element subtype
 Each activity requires one or more resources to be completed, completion is reached when all the required inputs have been specified.
 An activity is described by a set of data inputs
 
+Attachments to process or activity
+
 Resources
+
+Create SVG symbols associated to each BPMN element
