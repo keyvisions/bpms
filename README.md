@@ -20,3 +20,5 @@ Attachments to process or activity
 Resources
 
 Create SVG symbols associated to each BPMN element
+
+Raphael.js (move + resize) http://jsfiddle.net/tmkfs/ http://jsfiddle.net/vPyjc/
