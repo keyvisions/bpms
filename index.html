@@ -18,18 +18,25 @@
 
 <body>
     <ul id="bpmnmenu" class="menu">
-        <li class="disabled">Cut<span>Crtl-X</span>
+        <li class="disabled" data-action="cmd-cut">Cut<span>Crtl-X</span>
         </li>
-        <li>Copy<span>Crtl-C</span>
+        <li class="disabled" data-action="cmd-copy">Copy<span>Crtl-C</span>
         </li>
-        <li>Paste<span>Crtl-V</span>
+        <li class="disabled" data-action="cmd-paste">Paste<span>Crtl-V</span>
         </li>
-        <li class="separator">Delete</li>
-        <li>New...<span>&#9654;</span>
+        <li class="disabled" data-action="cmd-del">Delete</li>
+        <li class="separator"></li>
+        <li>New<span>&#9654;</span>
             <ul id="symbols" class="menu"></ul>
         </li>
     </ul>
+    <div id="diagram"></div>
     <div id="properties"></div>
 </body>
+
+<div id="security">
+    <ul id="roles"></ul>
+    <ul id="users"></ul>
+</div>
 
 </html>

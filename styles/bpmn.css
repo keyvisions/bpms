@@ -21,12 +21,13 @@ body {
 .menu li span {
     float: right;
 }
-.menu li:not(.disabled):hover {
+.menu li:not(.disabled):not(.separator):hover {
     color:#FFFFFF;
     background-color: #328EFE;
     cursor: pointer;
 }
 .menu .separator {
+    padding: 0;
     border-bottom: 1px solid #E0E0E0;
 }
 .menu .disabled {
@@ -42,5 +43,6 @@ body {
     margin:-1.5em 0 0 0;
 }
 path:hover {
-    fill:#328EFE;
+    stroke:#328EFE;
 }
+#diagram { border: 1px solid #000000; }

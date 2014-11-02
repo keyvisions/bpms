@@ -22,3 +22,8 @@ Resources
 Create SVG symbols associated to each BPMN element
 
 Raphael.js (move + resize) http://jsfiddle.net/tmkfs/ http://jsfiddle.net/vPyjc/
+
+Reading:
+http://www.wikihow.com/Write-a-Business-Process-Document
+
+http://www.bpmnquickguide.com/viewit.html

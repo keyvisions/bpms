@@ -1,20 +1,21 @@
 var diagram = null;
-var selectedPath = null;
+var selection = null;
 var bpmn = {
-    event: { title: "Event", set: [{ path: "M-25,0a25,25 0 1,0 50,0a25,25 0 1,0 -50,0" }] },
-    action: { title: "Action", set: [{ path: "M-75,-50l150,0l0,100l-150,0Z" }] },
-    gateway: { title: "Gateway", set: [{ path: "M0,-25l25,25l-25,25l-25,-25Z" }] },
-    lane: { title: "Lane", set: [{ path: "M0,-75l400,0l0,150l-400,0l0,-150m30,0l0,150" }, { text: "Lane", transform: "t10,0r90" }] },
-    pool: { title: "Pool", set: [{ path: "M0,-75l400,0l0,150l-400,0l0,-150m24,0l0,150" }, { path: "M0,-25l25,25l-25,25l-25,-25Z" }] },
-    textAnnotation: { title: "Text Annotation", set: [{ path: "M20,-50l-20,0l0,100l20,0" }, { text: "Annotation" }] },
-    flow: { title: "Flow", set: [{ path: "M0,0l200,0l0,-5l10,5l-10,5l0,-5", style: { fill: "#000000" } }] },
-    mail: { title: "Mail", set: [{ path: "M20,-15l-20,15l-20,-15l40,0l0,30l-40,0l0,-30" }] }
+    event: { title: "Event", set: [{ path: "M-25,0a25,25 0 1,0 50,0a25,25 0 1,0 -50,0" }, { text: "*", attr: { "font-size": "25px" } } ] },
+    activity: { title: "Activity", set: [{ path: "M-65,-40h130a10,10 0 0 1 10,10v80a-10,10 0 0 1 -10,10h-130a-10,-10 0 0 1 -10,-10v-80a10,-10 0 0 1 10,-10Z" }] },
+    gateway: { title: "Gateway", set: [{ path: "M0,-30l30,30l-30,30l-30,-30Z" }] },
+    flow: { title: "Flow", set: [{ path: "M0,0l200,0l0,-5l10,5l-10,5l0,-5", attr: { fill: "#000000" } }] },
+    data: { title: "Data", set: [{ path: "M10,-30l15,15v45h-50v-60h35v15h15" }] },
+    artifact: { title: "Artifact", set: [{ path: "M20,-50h-20v100h20" }, { text: "Text Annotation" }] },
+    swimlane: { title: "Swimlane", container: true, set: [{ path: "M0,-75h400v150h-400v-150Z" }, { text: "Lane", attr: { contenteditable: true }, transform: "t10,0r-90" }] }
+//    mail: { title: "Mail", set: [{ path: "M20,-15l-20,15l-20,-15l40,0l0,30l-40,0l0,-30" }] }
 };
 
 function init() {
     diagram = Raphael(0, 0, "100%", "100%");
     
     createBPMNMenu();
+    //loadSecurity();
 
     diagram.canvas.addEventListener("contextmenu", function(e) {
         e.preventDefault();
@@ -22,6 +23,7 @@ function init() {
         menu.style.display = "block";
         menu.style.left = e.clientX + "px";
         menu.style.top = e.clientY + "px";
+        
         return false;
     }, false);
     document.body.addEventListener("click", function (e) {
@@ -48,31 +50,61 @@ function createSymbol(symbol) {
         for (var i in bpmn[symbol].set) {
             var subset = bpmn[symbol].set[i];
             if (subset.path)
-                diagram.path(subset.path).attr(subset.style || { fill: '#FFFFFF' }).transform(subset.transform || "");
+                diagram.path(subset.path).attr(subset.attr || { fill: '#FFFFFF' }).transform(subset.transform || "");
             else if (subset.text)
-                diagram.text(subset.x || 0, subset.y || 0, subset.text).transform(subset.transform || "");
+                diagram.text(subset.x || 0, subset.y || 0, subset.text).attr(subset.attr || {}).transform(subset.transform || "");
         }
         var set = diagram.setFinish();
         set.forEach(function(subset) { subset.set = set; });
-        set.drag(move, start, up);
+
+        if (bpmn[symbol].container) { // If container object send to back
+            var r = [];
+            set.forEach(function (e) { r.push(e); });
+            for (var e = r.pop(); e; e.toBack(), e = r.pop());
+        }
+
+        set.drag(move, start, finish);
+        set.transform("...T" + [event.clientX,event.clientY]);
     }
 }
 
-function start() {
-    var set = this.set;
-    set.dx = 0, set.dy = 0;
-    set.animate({ "fill-opacity": 0.2 }, 500);
-}
 function move(dx, dy) {
     var set = this.set;
     set.transform("...T"+[dx-set.dx,dy-set.dy]);
     set.dx = dx, set.dy = dy;
 }
-function up() {
+function start() {
+    selection = this.set;
+    selection.dx = 0, selection.dy = 0;
+    selection.attr("stroke-opacity", 0.5);
+}
+function finish() {
     var set = this.set;
-    set.animate({ "fill-opacity": 1 }, 500);
+    set.attr("stroke-opacity", 1);
 }
 
 function setPath(newPath) {
-    if (selectedPath && newPath) selectedPath.attr("path", newPath);
+    if (selection && newPath) selection.attr("path", newPath);
+}
+
+var roles = [
+    { name: "guests", guid: "", title: "Guest role" },
+    { name: "manager", guid: "", title: "Manager" },
+    { name: "bpmanager", guid: "", title: "Business process manager" }
+];
+var users = [
+    { name: "guest", hash: "", password: "", roles: {} },
+    { name: "admin", hash: "", password: "", roles: {} }
+];
+function loadSecurity() {
+    var roles = document.getElementById("roles");
+    for (var i in roles) {
+        var li = document.createElement("li");
+        li.setAttribute("data-guid", roles[i].guid);
+        li.appendChild(document.createTextNode(roles[i].title));
+        roles.appendChild(li);
+    }
+    roles.addEventListener("click", function (e) {
+        
+    });
 }
