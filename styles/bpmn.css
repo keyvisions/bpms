@@ -22,7 +22,8 @@ body {
     float: right;
 }
 .menu li:not(.disabled):hover {
-    background-color: #37A4D4;
+    color:#FFFFFF;
+    background-color: #328EFE;
     cursor: pointer;
 }
 .menu .separator {
@@ -35,7 +36,11 @@ body {
     display: none;
 }
 .menu li:hover > ul {
+    color:#000000;
     display: block;
     left:11.5em;
     margin:-1.5em 0 0 0;
+}
+path:hover {
+    fill:#328EFE;
 }

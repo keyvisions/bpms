@@ -7,13 +7,10 @@
     <link rel="stylesheet" type="text/css" href="/styles/bpmn.css" />
     <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
-    <script src="/scripts/raphael.js"></script>
+    <script src="/scripts/raphael-min.js"></script>
     <script src="/scripts/bpmn.js"></script>
     <script>
         $(function() {
-            document.body.addEventListener("click", function (e) {
-                document.getElementById("bpmnmenu").style.display = "none";
-            });
             init();
         });
     </script>
@@ -32,6 +29,7 @@
             <ul id="symbols" class="menu"></ul>
         </li>
     </ul>
+    <div id="properties"></div>
 </body>
 
 </html>
