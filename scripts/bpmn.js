@@ -65,13 +65,12 @@ function start() {
 }
 function move(dx, dy) {
     var set = this.set;
-    set.transform("...T"+-set.dx+","+-set.dy);
-    set.transform("...T"+dx+","+dy);
+    set.transform("...T"+[dx-set.dx,dy-set.dy]);
     set.dx = dx, set.dy = dy;
 }
 function up() {
     var set = this.set;
-set.animate({ "fill-opacity": 1 }, 500);
+    set.animate({ "fill-opacity": 1 }, 500);
 }
 
 function setPath(newPath) {
