@@ -13,6 +13,7 @@ var bpmn = {
 
 function init() {
     diagram = Raphael(0, 0, "100%", "100%");
+    selection = diagram.set();
     
     createBPMNMenu();
     //loadSecurity();
@@ -39,12 +40,12 @@ function createBPMNMenu() {
         li.appendChild(document.createTextNode(bpmn[symbol].title));
         ul.appendChild(li);
     }
-    ul.addEventListener("click", function(e) {
-        createSymbol(e.target.getAttribute("data-type"));
+    ul.addEventListener("click", function(event) {
+        createSymbol(event.target.getAttribute("data-type"), event.clientX, event.clientY);
     });
 }
 
-function createSymbol(symbol) {
+function createSymbol(symbol, x, y) {
     if (symbol) {
         diagram.setStart();
         for (var i in bpmn[symbol].set) {
@@ -57,34 +58,42 @@ function createSymbol(symbol) {
         var set = diagram.setFinish();
         set.forEach(function(subset) { subset.set = set; });
 
-        if (bpmn[symbol].container) { // If container object send to back
-            var r = [];
-            set.forEach(function (e) { r.push(e); });
-            for (var e = r.pop(); e; e.toBack(), e = r.pop());
+        if (bpmn[symbol].container) { // Handle Raphael set.toBack() BUG
+            var l = [];
+            set.forEach(function (e) { l.push(e); });
+            for (var e = l.pop(); e; e.toBack(), e = l.pop());
         }
 
         set.drag(move, start, finish);
-        set.transform("...T" + [event.clientX,event.clientY]);
+        set.transform("...T" + [x,y]);
     }
 }
 
-function move(dx, dy) {
-    var set = this.set;
+function move(dx, dy, x, y, event) {
+    var set = selection; // this.set;
     set.transform("...T"+[dx-set.dx,dy-set.dy]);
     set.dx = dx, set.dy = dy;
 }
-function start() {
-    selection = this.set;
-    selection.dx = 0, selection.dy = 0;
-    selection.attr("stroke-opacity", 0.5);
-}
-function finish() {
+function start(x, y, event) {
+    var l;
+    if (!event.ctrlKey) {
+        l = diagram.canvas.getElementsByClassName("selected");
+        while (l.length > 0) { 
+            l[0].classList.remove("selected"); 
+        }
+    }
     var set = this.set;
-    set.attr("stroke-opacity", 1);
-}
+    set.forEach(function(e) { e.node.classList.toggle("selected"); });
 
-function setPath(newPath) {
-    if (selection && newPath) selection.attr("path", newPath);
+    selection.clear();
+    l = diagram.canvas.getElementsByClassName("selected");
+    for (var i = 0; i < l.length; ++i) { 
+        selection.push(diagram.getById(l[i].raphaelid)); 
+    }
+    selection.dx = 0, selection.dy = 0;
+}
+function finish(event) {
+
 }
 
 var roles = [
@@ -104,7 +113,7 @@ function loadSecurity() {
         li.appendChild(document.createTextNode(roles[i].title));
         roles.appendChild(li);
     }
-    roles.addEventListener("click", function (e) {
+    roles.addEventListener("click", function (event) {
         
     });
 }
