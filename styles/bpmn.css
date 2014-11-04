@@ -10,7 +10,7 @@ body {
     background-color: #FFFFFF;
     border: 1px solid #E0E0E0;
     list-style: none;
-    margin:0;
+    margin: 0;
     padding: 0px;
     box-shadow: 2px 2px 2px #888888;
 }
@@ -22,7 +22,7 @@ body {
     float: right;
 }
 .menu li:not(.disabled):not(.separator):hover {
-    color:#FFFFFF;
+    color: #FFFFFF;
     background-color: #328EFE;
     cursor: pointer;
 }
@@ -37,11 +37,19 @@ body {
     display: none;
 }
 .menu li:hover > ul {
-    color:#000000;
+    color: #000000;
     display: block;
-    left:11.5em;
-    margin:-1.5em 0 0 0;
+    left: 11.5em;
+    margin: -1.5em 0 0 0;
 }
-.selected, path:hover {
-    stroke:#328EFE;
+.selected,
+.hovered {
+    stroke: #328EFE;
+}
+#properties {
+    position: absolute;
+    z-index: 10;
+    width: 100em;
+    height: 1em;
+    border: 1px solid #000000;
 }
