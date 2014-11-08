@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <title>BPMN</title>
     <link rel="stylesheet" type="text/css" href="/styles/bpmn.css" />
     <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -18,13 +19,10 @@
 
 <body>
     <ul id="bpmnmenu" class="menu">
-        <li class="disabled" data-action="cmd-cut">Cut<span>Crtl-X</span>
-        </li>
-        <li class="disabled" data-action="cmd-copy">Copy<span>Crtl-C</span>
-        </li>
-        <li class="disabled" data-action="cmd-paste">Paste<span>Crtl-V</span>
-        </li>
-        <li class="disabled" data-action="cmd-del">Delete</li>
+        <li class="disabled" id="cmd-cut">Cut<span>Crtl-X</span></li>
+        <li class="disabled" id="cmd-copy">Copy<span>Crtl-C</span></li>
+        <li class="disabled" id="cmd-paste">Paste<span>Crtl-V</span></li>
+        <li class="disabled" id="cmd-del">Delete<span>Del</span></li>
         <li class="separator"></li>
         <li>New<span>&#9654;</span>
             <ul id="symbols" class="menu"></ul>

@@ -46,10 +46,11 @@ body {
     stroke: #328EFE;
 }
 .selector {
-    stroke-dasharray: "5,5"
+    fill: #328EFE;
+    opacity: 0.1;
+    stroke: none;
 }
 #properties {
-    display: none;
     position: absolute;
     z-index: 10;
     width: 100em;

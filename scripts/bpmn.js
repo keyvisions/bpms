@@ -67,6 +67,10 @@ function init() {
 
     diagram = Raphael(0, 0, "100%", "100%");
     selection = diagram.set();
+    selector = diagram.rect(0, 0, 0, 0);
+    selector.active = false;
+    selector.node.classList.add("selector");
+    
     createBPMNMenu();
     diagram.canvas.addEventListener("contextmenu", function(e) {
         e.preventDefault();
@@ -74,21 +78,33 @@ function init() {
         menu.style.display = "block";
         menu.style.left = e.clientX + "px";
         menu.style.top = e.clientY + "px";
+        ["cmd-cut", "cmd-copy", "cmd-del"].forEach(function (id) {
+            document.getElementById(id).classList[selection.length === 0 ? "add" : "remove"]("disabled");
+        });
         return false;
     }, false);
-    document.addEventListener("click", function(e) {
+    
+    document.addEventListener("mousedown", function(event) {
         document.getElementById("bpmnmenu").style.display = "none";
-        if (e.target.localName === "svg") clearSelection();
+        if (event.which === 1 && event.target.localName === "svg") {
+            if (!event.ctrlKey)
+                clearSelection();
+            selector.x = event.pageX, selector.y = event.pageY;
+            selector.attr({x: selector.x, y: selector.y});
+            selector.active = true;
+        }
     });
-    diagram.drag(dragSelector, dragSelectorStart, dragSelectorEnd);
-}
-function dragSelector(dx, dy, x, y, event) {
-    
-}
-function dragSelectorStart(x, y, event) {
-    
-}
-function dragSelectorEnd(event) {
+    document.addEventListener("mousemove", function(event) {
+        if (event.which === 1 && selector.active) {
+            if (event.pageX < selector.x) selector.attr({x: event.pageX});
+            if (event.pageY < selector.y) selector.attr({y: event.pageY});
+            selector.attr({width: Math.abs(event.pageX - selector.x), height: Math.abs(event.pageY - selector.y)});
+        }    
+    });
+    document.addEventListener("mouseup", function(event) {
+        selector.attr({width: 0, height: 0});
+        selector.active = false;   
+    });
     
 }
 
@@ -100,7 +116,7 @@ function createBPMNMenu() {
         li.appendChild(document.createTextNode(symbols[symbol].title));
         ul.appendChild(li);
     }
-    ul.addEventListener("click", function(event) {
+    ul.addEventListener("mousedown", function(event) {
         createSymbol(event.target.getAttribute("data-type"), event);
     });
 }
@@ -110,13 +126,11 @@ function createSymbol(symbol, event) {
         diagram.setStart();
         for (var i in symbols[symbol].set) {
             var subset = symbols[symbol].set[i];
-            if (subset.path) diagram.path(subset.path).attr(subset.attr || {
-                fill: '#FFFFFF'
-            }).transform(subset.transform || "");
+            if (subset.path) diagram.path(subset.path).attr(subset.attr || { fill: '#FFFFFF' }).transform(subset.transform || "");
             else if (subset.text) diagram.text(subset.x || 0, subset.y || 0, subset.text).attr(subset.attr || {}).transform(subset.transform || "");
         }
         var set = diagram.setFinish();
-        set.transform("...T" + [event.x, event.y]);
+        set.transform("...T" + [event.pageX, event.pageY]);
         set.forEach(function(subset) {
             subset.set = set;
         });
@@ -138,7 +152,7 @@ function createSymbol(symbol, event) {
             });
         });
         set.drag(dragSymbol, dragSymbolStart, dragSymbolFinish);
-        dragSymbolStart(event.x, event.y, event, set);
+        dragSymbolStart(event.pageX, event.pageY, event, set);
     }
 }
 
@@ -182,7 +196,7 @@ function dragSymbolFinish() {
         });
     }
 }
-
+/*
 var roles = [{
     name: "guests",
     guid: "",
@@ -217,4 +231,9 @@ function loadSecurity() {
         roles.appendChild(li);
     }
     roles.addEventListener("click", function(event) {});
+}
+*/
+
+function log(txt) {
+    document.getElementById("properties").innerHTML = txt;
 }
