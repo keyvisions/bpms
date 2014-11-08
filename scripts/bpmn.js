@@ -1,6 +1,5 @@
-var diagram = null;
-var selection = null;
-var bpmn = {
+var diagram, selection, selector;
+var symbols = {
     event: {
         title: "Event",
         set: [{
@@ -64,10 +63,11 @@ var bpmn = {
 };
 
 function init() {
+    //loadSecurity();
+
     diagram = Raphael(0, 0, "100%", "100%");
     selection = diagram.set();
     createBPMNMenu();
-    //loadSecurity();
     diagram.canvas.addEventListener("contextmenu", function(e) {
         e.preventDefault();
         var menu = document.getElementById("bpmnmenu");
@@ -80,14 +80,24 @@ function init() {
         document.getElementById("bpmnmenu").style.display = "none";
         if (e.target.localName === "svg") clearSelection();
     });
+    diagram.drag(dragSelector, dragSelectorStart, dragSelectorEnd);
+}
+function dragSelector(dx, dy, x, y, event) {
+    
+}
+function dragSelectorStart(x, y, event) {
+    
+}
+function dragSelectorEnd(event) {
+    
 }
 
 function createBPMNMenu() {
     var ul = document.getElementById("symbols");
-    for (var symbol in bpmn) {
+    for (var symbol in symbols) {
         var li = document.createElement("li");
         li.setAttribute("data-type", symbol);
-        li.appendChild(document.createTextNode(bpmn[symbol].title));
+        li.appendChild(document.createTextNode(symbols[symbol].title));
         ul.appendChild(li);
     }
     ul.addEventListener("click", function(event) {
@@ -98,8 +108,8 @@ function createBPMNMenu() {
 function createSymbol(symbol, event) {
     if (symbol) {
         diagram.setStart();
-        for (var i in bpmn[symbol].set) {
-            var subset = bpmn[symbol].set[i];
+        for (var i in symbols[symbol].set) {
+            var subset = symbols[symbol].set[i];
             if (subset.path) diagram.path(subset.path).attr(subset.attr || {
                 fill: '#FFFFFF'
             }).transform(subset.transform || "");
@@ -110,7 +120,7 @@ function createSymbol(symbol, event) {
         set.forEach(function(subset) {
             subset.set = set;
         });
-        if (bpmn[symbol].container) { // Handle Raphael set.toBack() BUG
+        if (symbols[symbol].container) { // Handle Raphael set.toBack() BUG
             var l = [];
             set.forEach(function(e) {
                 l.push(e);
@@ -127,8 +137,8 @@ function createSymbol(symbol, event) {
                 e.node.classList.remove("hovered");
             });
         });
-        set.drag(dragSymbol, dragStartSymbol, dragFinish);
-        dragStartSymbol(event.x, event.y, event, set);
+        set.drag(dragSymbol, dragSymbolStart, dragSymbolFinish);
+        dragSymbolStart(event.x, event.y, event, set);
     }
 }
 
@@ -145,8 +155,7 @@ function dragSymbol(dx, dy) {
     selection.dx = dx, selection.dy = dy;
     selection.toggle = false;
 }
-
-function dragStartSymbol(x, y, event, set) {
+function dragSymbolStart(x, y, event, set) {
     var l;
     if (!event.ctrlKey) {
         l = diagram.canvas.getElementsByClassName("selected");
@@ -154,8 +163,7 @@ function dragStartSymbol(x, y, event, set) {
             l[0].classList.remove("selected");
         }
         selection.toggle = false;
-    } else
-        selection.toggle = this.node.classList.contains("selected");
+    } else selection.toggle = this.node.classList.contains("selected");
     (set || this.set).forEach(function(e) {
         e.node.classList.add("selected");
     });
@@ -166,14 +174,13 @@ function dragStartSymbol(x, y, event, set) {
     }
     selection.dx = 0, selection.dy = 0;
 }
-
-function dragFinish() {
+function dragSymbolFinish() {
     if (selection.toggle) {
         this.set.forEach(function(e) {
             selection.exclude(e);
             e.node.classList.remove("selected");
         });
-    }    
+    }
 }
 
 var roles = [{
