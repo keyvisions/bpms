@@ -1,8 +1,11 @@
 body {
+    padding:0;
     font-family: sans-serif;
     font-size: 10pt;
+    border:1px solid black;
 }
 .menu {
+    font-size: 0.9em;
     display: none;
     position: absolute;
     z-index: 999999;
@@ -42,18 +45,35 @@ body {
     left: 11.5em;
     margin: -1.5em 0 0 0;
 }
-.selected, .hovered {
+.symbol {
+    stroke-width: 1;
+    stroke: #000000;
+    fill: #FFFFFF;
+}
+.symbol:hover, .selected, .touched {
     stroke: #328EFE;
+    fill: #FFFFFF;
 }
-.selector {
+.selected {
+    stroke-width:2;
+}
+#selector {
+    opacity: 0.2;
     fill: #328EFE;
-    opacity: 0.1;
-    stroke: none;
+    stroke:0;
 }
-#properties {
+#properties, .properties {
+    display: none;
     position: absolute;
     z-index: 10;
     width: 100em;
     height: 1em;
     border: 1px solid #000000;
+}
+html, body, #diagram {
+    width: 100%;
+    height: 100%;
+}
+#log {
+    position: absolute; border: 1px solid black; top: 0; right: 0; background-color: #FFFFFF;
 }

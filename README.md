@@ -1,7 +1,7 @@
-bpms
+keyvisions bpms
 =
 
-KeyVisions BPMS (Business Process Management System) project aim is the development of a web based BPMN process designer, transform the process in XPDL, ability to define roles and and associated calendar, business process data, engine and analytics.
+The components of the KeyVisions BPMS (Business Process Management System) project are: a web based BPMN process designer that includes semantics of business process data and roles, a BPMN to XPDL generator, an engine and analytics.
 
 BPMN defines *events*, *activities*, *gateways*, *flows*, *data*, *artifacts* and *swimlanes*. The actions possible 
 
@@ -18,24 +18,38 @@ An *activity* includes a set of *data* inputs, the degenerate case involves a si
 Each activity requires one or more resources (human and non human) to be completed, completion is reached when all required inputs have been specified.
 
 Attachments to process or activity
-
 ---
 
 Resources
-
 ---
 
-Create SVG symbols associated to each BPMN element
+BPMN Designer Behavior
+=
+The idea is to incorporate in the designer logic that aids the business process development.
 
-Raphael.js (move + resize) http://jsfiddle.net/tmkfs/ http://jsfiddle.net/vPyjc/
+ - Adding a swimlane to a swimlane creates a pool, or adds a swimlane to the underling pool. Dragging and dropping a swimlane on a swimlane has the same effect.
+ - WYSIWYG behavior
+ - Automatic alignment
+ - Grid snapping
 
-Reading:
-http://www.wikihow.com/Write-a-Business-Process-Document
 
+
+References
+=
+http://www.bpmn.org/
 http://www.bpmnquickguide.com/viewit.html
+http://www.xpdl.org/
+
+http://www.wikihow.com/Write-a-Business-Process-Document
 
 ---
 
 Technologies
 =
-HTML, SVG, CSS, javascript, node.js, raphael.js, jquery, XML, JSON
+This project is built on HTML, SVG, XML, CSS, javascript, node.js and JSON (versions available as of 11/09/2014). Raphael.js has been adopted to ease SVG development, however, while using it, its limitation have surfaced so probably it will be dropped in favor of bare DOM/SVG handling.
+
+Create SVG symbols associated to each BPMN element
+
+
+---
+KeyVisions BPMS icon is a plain circle, it simply represents a process start event.

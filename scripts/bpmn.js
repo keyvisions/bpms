@@ -1,239 +1,162 @@
-var diagram, selection, selector;
-var symbols = {
-    event: {
-        title: "Event",
-        set: [{
-            path: "M-25,0a25,25 0 1,0 50,0a25,25 0 1,0 -50,0"
-        }, {
-            text: "*",
-            attr: {
-                "font-size": "25px"
-            }
-        }]
-    },
-    activity: {
-        title: "Activity",
-        set: [{
-            path: "M-65,-40h130a10,10 0 0 1 10,10v80a-10,10 0 0 1 -10,10h-130a-10,-10 0 0 1 -10,-10v-80a10,-10 0 0 1 10,-10Z"
-        }]
-    },
-    gateway: {
-        title: "Gateway",
-        set: [{
-            path: "M0,-30l30,30l-30,30l-30,-30Z"
-        }]
-    },
-    flow: {
-        title: "Flow",
-        set: [{
-            path: "M0,0l200,0l0,-5l10,5l-10,5l0,-5",
-            attr: {
-                fill: "#000000"
-            }
-        }]
-    },
-    data: {
-        title: "Data",
-        set: [{
-            path: "M10,-30l15,15v45h-50v-60h35v15h15"
-        }]
-    },
-    artifact: {
-        title: "Artifact",
-        set: [{
-            path: "M20,-50h-20v100h20"
-        }, {
-            text: "Text Annotation"
-        }]
-    },
-    swimlane: {
-        title: "Swimlane",
-        container: true,
-        set: [{
-            path: "M0,-75h400v150h-400v-150Z"
-        }, {
-            text: "Lane",
-            attr: {
-                contenteditable: true
-            },
-            transform: "t10,0r-90"
-        }]
-    }
-    //    mail: { title: "Mail", set: [{ path: "M20,-15l-20,15l-20,-15l40,0l0,30l-40,0l0,-30" }] }
-};
+"use strict";
+var ns_svg = "http://www.w3.org/2000/svg";
+var ns_xlink = "http://www.w3.org/1999/xlink";
+var diagram, selection, touched, selector;
 
 function init() {
-    //loadSecurity();
+    if (!Element.setAttributes) {
+        Element.prototype.setAttributes = function(attrs) {
+            for (var idx in attrs) {
+                if (idx === 'style' && typeof attrs[idx] === 'object') {
+                    for (var prop in attrs[idx]) {
+                        this.style[prop] = attrs[idx][prop];
+                    }
+                } else {
+                    this.setAttribute(idx, attrs[idx]);
+                }
+            }
+        };
+    }
+    diagram = document.getElementById("diagram");
+    diagram.symbols = diagram.getElementsByClassName("symbol");
+    selector = diagram.getElementById("selector");
+    selection = diagram.getElementsByClassName("selected");
+    touched = diagram.getElementsByClassName("touched");
 
-    diagram = Raphael(0, 0, "100%", "100%");
-    selection = diagram.set();
-    selector = diagram.rect(0, 0, 0, 0);
-    selector.active = false;
-    selector.node.classList.add("selector");
-    
-    createBPMNMenu();
-    diagram.canvas.addEventListener("contextmenu", function(e) {
+    // BPMN context menu
+    var ul = document.getElementById("mnu_symbols");
+    [].forEach.call(diagram.getElementsByClassName("mod_symbol"), function(el) {
+        var li = document.createElement("li");
+        li.id = "cmd_" + el.getAttribute("id");
+        li.appendChild(document.createTextNode(el.getAttribute("title")));
+        ul.appendChild(li);
+    });
+    diagram.addEventListener("contextmenu", function(e) {
         e.preventDefault();
-        var menu = document.getElementById("bpmnmenu");
+        var menu = document.getElementById("mnu_bpmn");
         menu.style.display = "block";
         menu.style.left = e.clientX + "px";
         menu.style.top = e.clientY + "px";
-        ["cmd-cut", "cmd-copy", "cmd-del"].forEach(function (id) {
+        ["cmd_cut", "cmd_copy", "cmd_del", "cmd_prop"].forEach(function(id) {
             document.getElementById(id).classList[selection.length === 0 ? "add" : "remove"]("disabled");
         });
         return false;
     }, false);
+    document.getElementById("mnu_bpmn").addEventListener("mousedown", function(e) {
+        document.getElementById("mnu_bpmn").style.display = "none";
+        switch (e.target.id) {
+            case "cmd_cut":
+            case "cmd_copy":
+            case "cmd_paste":
+            case "cmd_del":
+                while (selection.length > 0) selection[0].parentNode.removeChild(selection[0]);
+                break;
+            case "cmd_prop":
+                break;
+            default:
+                createSymbol(e.target.id.substr(4), e);
+        }
+    });
+
+    function createSymbol(symbol, e) {
+        // <use class="symbol" xlink:href="#event" x="50" y="25" />
+        var obj = document.createElementNS(ns_svg, "use");
+        obj.setAttributeNS(ns_xlink, "href", "#" + symbol);
+        obj.setAttributes({ x: e.clientX, y: e.clientY });
+        obj.classList.add("symbol");
+        diagram.appendChild(obj);
+    }
     
-    document.addEventListener("mousedown", function(event) {
-        document.getElementById("bpmnmenu").style.display = "none";
-        if (event.which === 1 && event.target.localName === "svg") {
-            if (!event.ctrlKey)
+    // Handle BP diagram
+    diagram.addEventListener("dragstart", preventEvent, false);
+    diagram.addEventListener("dragenter", preventEvent, false);
+    diagram.addEventListener("dragover", preventEvent, false);
+    diagram.addEventListener("dragleave", preventEvent, false);
+    diagram.addEventListener("dragend", preventEvent, false);
+    diagram.addEventListener("drop", preventEvent, false);
+    function preventEvent(e) {
+        e.preventDefault();
+    }
+    
+    diagram.addEventListener("mousedown", function(e) {
+        document.getElementById("mnu_bpmn").style.display = "none";
+        var obj = getSymbol(e.target);
+        if (e.which === 1) {
+            selector.track = true;
+            if (!e.ctrlKey) {
                 clearSelection();
-            selector.x = event.pageX, selector.y = event.pageY;
-            selector.attr({x: selector.x, y: selector.y});
-            selector.active = true;
+                if (obj) { 
+                    obj.classList.add("selected");
+                    selector.track = false;
+                }
+            } else if (obj) {
+                obj.classList.toggle("selected");
+                selector.track = false;
+            }
+            
+            selector.xo = e.clientX - diagram.style.left, selector.yo = e.clientY - diagram.style.top;
+            selector.setAttributes({ x: selector.xo, y: selector.yo, width: 0, height: 0 });
+            selector.drag = false;
         }
     });
-    document.addEventListener("mousemove", function(event) {
-        if (event.which === 1 && selector.active) {
-            if (event.pageX < selector.x) selector.attr({x: event.pageX});
-            if (event.pageY < selector.y) selector.attr({y: event.pageY});
-            selector.attr({width: Math.abs(event.pageX - selector.x), height: Math.abs(event.pageY - selector.y)});
-        }    
-    });
-    document.addEventListener("mouseup", function(event) {
-        selector.attr({width: 0, height: 0});
-        selector.active = false;   
-    });
-    
-}
+    diagram.addEventListener("mousemove", function(e) {
+        if (e.buttons & 1 === 1) {
+            e.preventDefault();
+            var x = e.clientX, y = e.clientY;
 
-function createBPMNMenu() {
-    var ul = document.getElementById("symbols");
-    for (var symbol in symbols) {
-        var li = document.createElement("li");
-        li.setAttribute("data-type", symbol);
-        li.appendChild(document.createTextNode(symbols[symbol].title));
-        ul.appendChild(li);
-    }
-    ul.addEventListener("mousedown", function(event) {
-        createSymbol(event.target.getAttribute("data-type"), event);
-    });
-}
-
-function createSymbol(symbol, event) {
-    if (symbol) {
-        diagram.setStart();
-        for (var i in symbols[symbol].set) {
-            var subset = symbols[symbol].set[i];
-            if (subset.path) diagram.path(subset.path).attr(subset.attr || { fill: '#FFFFFF' }).transform(subset.transform || "");
-            else if (subset.text) diagram.text(subset.x || 0, subset.y || 0, subset.text).attr(subset.attr || {}).transform(subset.transform || "");
+            // Always select the symbol under the mouse
+            var obj = getSymbol(e.target);
+            if (obj && selector.drag === false) obj.classList.add("selected");
+            
+            // Track selector
+            if (selector.track) {
+                selector.setAttributes({
+                    x: x < selector.xo ? x : selector.xo, y: y < selector.yo ? y : selector.yo,
+                    width: Math.abs(x - selector.xo), height: Math.abs(y - selector.yo)
+                });
+            
+                // Touch symbols included in selector
+                var sbox = selector.getBoundingClientRect();
+                [].forEach.call(diagram.symbols, function(el) {
+                    el.classList[overlap(sbox, el.getBoundingClientRect()) ? "add" : "remove"]("touched");
+                });
+            } else { 
+                // Move selected symbols
+                var dx = x - selector.xo, dy = y - selector.yo;
+                [].forEach.call(selection, function(el) {
+                    el.setAttribute("transform", "translate(" + ((el.xo || 0) + dx) + " " + ((el.yo || 0) + dy) + ")");
+                });
+            }
+            selector.drag = true;
         }
-        var set = diagram.setFinish();
-        set.transform("...T" + [event.pageX, event.pageY]);
-        set.forEach(function(subset) {
-            subset.set = set;
-        });
-        if (symbols[symbol].container) { // Handle Raphael set.toBack() BUG
-            var l = [];
-            set.forEach(function(e) {
-                l.push(e);
+    });
+    diagram.addEventListener("mouseup", function(e) {
+        if (e.which === 1) {
+            cleanUpEvent();
+            while (touched.length > 0) {
+                touched[0].classList.add("selected");
+                touched[0].classList.remove("touched");
+            }
+            [].forEach.call(selection, function(el) {
+                var matrix = el.getTransformToElement(diagram);
+                el.xo = matrix.e, el.yo = matrix.f;
             });
-            for (var e = l.pop(); e; e.toBack(), e = l.pop());
         }
-        set.mouseover(function() {
-            this.set.forEach(function(e) {
-                e.node.classList.add("hovered");
-            });
-        });
-        set.mouseout(function() {
-            this.set.forEach(function(e) {
-                e.node.classList.remove("hovered");
-            });
-        });
-        set.drag(dragSymbol, dragSymbolStart, dragSymbolFinish);
-        dragSymbolStart(event.pageX, event.pageY, event, set);
-    }
-}
-
-function clearSelection() {
-    selection.clear();
-    var l = diagram.canvas.getElementsByClassName("selected");
-    while (l.length > 0) {
-        l[0].classList.remove("selected");
-    }
-}
-
-function dragSymbol(dx, dy) {
-    selection.transform("...T" + [dx - selection.dx, dy - selection.dy]);
-    selection.dx = dx, selection.dy = dy;
-    selection.toggle = false;
-}
-function dragSymbolStart(x, y, event, set) {
-    var l;
-    if (!event.ctrlKey) {
-        l = diagram.canvas.getElementsByClassName("selected");
-        while (l.length > 0) {
-            l[0].classList.remove("selected");
-        }
-        selection.toggle = false;
-    } else selection.toggle = this.node.classList.contains("selected");
-    (set || this.set).forEach(function(e) {
-        e.node.classList.add("selected");
     });
-    selection.clear();
-    l = diagram.canvas.getElementsByClassName("selected");
-    for (var i = 0; i < l.length; ++i) {
-        selection.push(diagram.getById(l[i].raphaelid));
-    }
-    selection.dx = 0, selection.dy = 0;
-}
-function dragSymbolFinish() {
-    if (selection.toggle) {
-        this.set.forEach(function(e) {
-            selection.exclude(e);
-            e.node.classList.remove("selected");
-        });
-    }
-}
-/*
-var roles = [{
-    name: "guests",
-    guid: "",
-    title: "Guest role"
-}, {
-    name: "manager",
-    guid: "",
-    title: "Manager"
-}, {
-    name: "bpmanager",
-    guid: "",
-    title: "Business process manager"
-}];
-var users = [{
-    name: "guest",
-    hash: "",
-    password: "",
-    roles: {}
-}, {
-    name: "admin",
-    hash: "",
-    password: "",
-    roles: {}
-}];
 
-function loadSecurity() {
-    var roles = document.getElementById("roles");
-    for (var i in roles) {
-        var li = document.createElement("li");
-        li.setAttribute("data-guid", roles[i].guid);
-        li.appendChild(document.createTextNode(roles[i].title));
-        roles.appendChild(li);
+    function cleanUpEvent() {
+        selector.track = false;
+        selector.drag = false;
+        selector.setAttributes({x: 0, y: 0, width: 0, height: 0});
     }
-    roles.addEventListener("click", function(event) {});
-}
-*/
-
-function log(txt) {
-    document.getElementById("properties").innerHTML = txt;
+    function overlap(rect1, rect2) {
+        return rect2.right >= rect1.left && rect2.left <= rect1.right && rect2.bottom >= rect1.top && rect2.top <= rect1.bottom;
+    }
+    function clearSelection() {
+        while (selection.length > 0) selection[0].classList.remove("selected");
+    }
+    function getSymbol(obj) {
+        for (; obj !== diagram && !obj.classList.contains("symbol"); obj = obj.parentNode);
+        return (obj === diagram) ? null : obj;
+    }
 }
