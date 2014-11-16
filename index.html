@@ -18,44 +18,50 @@
 
 <body>
     <nav id="menu"></nav>
-    <svg id="diagram">
+    <svg id="diagram" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs>
+            <g class="mod_symbol" id="event" title="Event">
+                <circle cx="0" cy="0" r="25"/> 
+            </g>
+            <g class="mod_symbol" id="activity" title="Activity">
+                <rect x="-65" y="-40" width="130" height="80" rx="10" ry="10"/>
+            </g>
+            <g class="mod_symbol" id="gateway" title="Gateway">
+                <rect x="-20" y="-20" width="40" height="40" transform="rotate(45)"/>
+            </g>
+            <g class="mod_symbol" id="flow" title="Flow">
+                <path d="M0,0l200,0l0,-5l10,5l-10,5l0,-5"/>
+            </g>
+            <g class="mod_symbol" id="data" title="Data">
+                <path d="M10,-30l10,10v45h-40v-55h30v10h10"/>
+            </g>
+            <g class="mod_symbol" id="artifact" title="Artifact">
+                <path d="M20,-50h-20v100h20"/>
+                <!--div contenteditable="true">This is a description</div-->
+            </g>
+            <g class="mod_symbol" id="swimlane" title="Swimlane">
+                <path d="M0,-75h400v150h-400v-150Z"/>
+                <text x="20" y="0" transform="rotate(270,20,0)">Lane</text>
+            </g>
+        </defs>
         <rect id="selector" x="0" y="0" width="0" height="0"/>
-        <symbol class="mod_symbol" id="event" title="Event">
-            <circle cx="26" cy="26" r="25"/> 
-        </symbol>
-        <symbol class="mod_symbol" id="activity" title="Activity">
-            <rect x="1" y="1" width="130" height="80" rx="10" ry="10"/>
-        </symbol>
-        <symbol class="mod_symbol" id="gateway" title="Gateway">
-            <rect x="1" y="1" width="50" height="50" transform="rotate(45,25,25)"/>
-        </symbol>
-        <symbol class="mod_symbol" id="flow" title="Flow">
-            <path d="M0,0l200,0l0,-5l10,5l-10,5l0,-5"/>
-        </symbol>
-        <symbol class="mod_symbol" id="data" title="Data">
-            <path d="M10,-30l15,15v45h-50v-60h35v15h15"/>
-        </symbol>
-        <symbol class="mod_symbol" id="artifact" title="Artifact">
-            <polyline d="M20,-50h-20v100h20"/>
-            <!--div contenteditable="true">This is a description</div-->
-        </symbol>
-        <symbol class="mod_symbol" id="swimlane" title="Swimlane">
-            <path d="M0,-75h400v150h-400v-150Z"/>
-            <text transform="rotate(90)">Name</text>
-        </symbol>
     </svg>
     <ul id="mnu_bpmn" class="menu">
-        <li class="disabled" id="cmd_cut">Cut<span>Crtl-X</span></li>
-        <li class="disabled" id="cmd_copy">Copy<span>Crtl-C</span></li>
-        <li class="disabled" id="cmd_paste">Paste<span>Crtl-V</span></li>
-        <li class="disabled" id="cmd_dup">Duplicate</li>
+        <li class="disabled" id="cmd_undo">Undo<span>Ctrl+Z</span></li>
+        <li class="disabled" id="cmd_redo">Redo<span>Shift+Ctrl+Z</span></li>
+        <li class="separator"></li>
+        <li class="disabled" id="cmd_cut">Cut<span>Ctrl+X</span></li>
+        <li class="disabled" id="cmd_copy">Copy<span>Ctrl+C</span></li>
+        <li class="disabled" id="cmd_paste">Paste<span>Ctrl+V</span></li>
         <li class="disabled" id="cmd_del">Delete<span>Del</span></li>
         <li class="separator"></li>
-        <li>New<span>&#9654;</span>
+        <li class="disabled" id="cmd_all">Select all<span>Ctrl+A</span></li>
+        <li class="separator"></li>
+        <li>New<span style="font-size:0.8em">&#9654;</span>
             <ul id="mnu_symbols" class="menu"></ul>
         </li>
         <li class="separator"></li>
-        <li class="disabled" id="cmd_prop">Properties</li>
+        <li class="disabled" id="cmd_prop"><b>Properties...</b></li>
     </ul>
     <div id="properties"></div>
     <div id="log"></div>

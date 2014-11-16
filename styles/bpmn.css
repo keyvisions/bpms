@@ -1,11 +1,10 @@
+* { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
 body {
-    padding:0;
+    margin:0;
     font-family: sans-serif;
     font-size: 10pt;
-    border:1px solid black;
 }
 .menu {
-    font-size: 0.9em;
     display: none;
     position: absolute;
     z-index: 999999;
@@ -22,6 +21,7 @@ body {
     margin: 3px 0;
 }
 .menu li span {
+    padding-left:3em;
     float: right;
 }
 .menu li:not(.disabled):not(.separator):hover {
@@ -45,6 +45,11 @@ body {
     left: 11.5em;
     margin: -1.5em 0 0 0;
 }
+text {
+    stroke-width:0;
+    text-anchor:middle;
+    fill:#328EFE;
+}
 .symbol {
     stroke-width: 1;
     stroke: #000000;
@@ -58,7 +63,7 @@ body {
     stroke-width:2;
 }
 #selector {
-    opacity: 0.2;
+    opacity: 0.3;
     fill: #328EFE;
     stroke:0;
 }
