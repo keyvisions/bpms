@@ -19,6 +19,7 @@ function init() {
     }
     diagram = document.getElementById("diagram");
     diagram.symbols = diagram.getElementsByClassName("symbol");
+    diagram.snap = 10;
     selector = diagram.getElementById("selector");
     selection = diagram.getElementsByClassName("selected");
     touched = diagram.getElementsByClassName("touched");
@@ -33,38 +34,70 @@ function init() {
     });
     diagram.addEventListener("contextmenu", function(e) {
         e.preventDefault();
+        if (e.target.classList.contains("symbol"))
+            e.target.classList.add("selected");
         var menu = document.getElementById("mnu_bpmn");
         menu.style.display = "block";
         menu.style.left = e.clientX + "px";
         menu.style.top = e.clientY + "px";
-        ["cmd_cut", "cmd_copy", "cmd_del", "cmd_prop"].forEach(function(id) {
+        ["cmd_cut", "cmd_copy", "cmd_del", "cmd_prop"].forEach(function (id) {
             document.getElementById(id).classList[selection.length === 0 ? "add" : "remove"]("disabled");
         });
+        document.getElementById("cmd_all").classList[diagram.symbols.length === 0 ? "add" : "remove"]("disabled");
         return false;
     }, false);
-    document.getElementById("mnu_bpmn").addEventListener("mousedown", function(e) {
+    document.getElementById("mnu_bpmn").addEventListener("mousedown", function (e) {
+        handleCommand(e.target.id, e);
+    });
+    document.addEventListener("keyup", function(e) {
+        e.preventDefault();
+        if (e.key === "Esc") {
+            handleCommand("cmd_esc", e);
+        } else {
+            [].forEach.call(document.getElementById("mnu_bpmn").getElementsByTagName("span"), function (el) {
+               if (el.textContent.toUpperCase() === (e.shiftKey ? "SHIFT+" : "") + (e.ctrlKey ? "CTRL+" : "") + e.key.toUpperCase()) {
+                   handleCommand(el.parentNode.id, e);
+                   return;
+               }
+            });
+        }
+    });
+    
+    function handleCommand(cmd, e) {
         document.getElementById("mnu_bpmn").style.display = "none";
-        switch (e.target.id) {
+        switch (cmd) {
+            case "cmd_esc":
+                [].forEach.call(diagram.symbols, function (el) {
+                   el.classList.remove("selected");
+                });
+                break;
             case "cmd_cut":
+                break;
             case "cmd_copy":
+                break;
             case "cmd_paste":
+                break;
             case "cmd_del":
                 while (selection.length > 0) selection[0].parentNode.removeChild(selection[0]);
+                break;
+            case "cmd_all":
+                [].forEach.call(diagram.symbols, function (el) {
+                   el.classList.add("selected");
+                });
                 break;
             case "cmd_prop":
                 break;
             default:
-                createSymbol(e.target.id.substr(4), e);
+                createSymbol(e.target.id.substr(4), e.clientX, e.clientY);
         }
-    });
+    }
 
-    function createSymbol(symbol, e) {
-        // <use class="symbol" xlink:href="#event" x="50" y="25" />
+    function createSymbol(symbol, x, y) {
         var obj = document.createElementNS(ns_svg, "use");
         obj.setAttributeNS(ns_xlink, "href", "#" + symbol);
-        obj.setAttributes({ x: e.clientX, y: e.clientY });
+        obj.setAttributes({ x: x, y: y });
         obj.classList.add("symbol");
-        diagram.appendChild(obj);
+        diagram.insertBefore(obj, selector);
     }
     
     // Handle BP diagram
@@ -74,9 +107,7 @@ function init() {
     diagram.addEventListener("dragleave", preventEvent, false);
     diagram.addEventListener("dragend", preventEvent, false);
     diagram.addEventListener("drop", preventEvent, false);
-    function preventEvent(e) {
-        e.preventDefault();
-    }
+    function preventEvent(e) { e.preventDefault(); }
     
     diagram.addEventListener("mousedown", function(e) {
         document.getElementById("mnu_bpmn").style.display = "none";
