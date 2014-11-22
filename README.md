@@ -1,9 +1,9 @@
 keyvisions bpms
 =
 
-KeyVisions BPMS (Business Process Management Symphony) is a SaaS project it includes an BPMN (Business Process Model and Notation) based designer with a XPDL (XML Process Definition Language) generator, a BPE (Business Process Engine) and a BPI (Business Process Interface).
+KeyVisions BPMS (Business Process Management Symphony) is a SaaS project that includes a BPMN (Business Process Model and Notation) based designer with a XPDL (XML Process Definition Language) generator, a BPE (Business Process Engine) and a BPI (Business Process Interface) build on the KeyVisions WBDL project.
 
-The BPI is build on KeyVisions ESITE
+In this context the S in the acronym BPMS stands for Symphony not System, in the documentation 
 
 KeyVisions BPMS icon is a plain circle, it simply represents a process start event.
 
