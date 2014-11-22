@@ -1,7 +1,11 @@
 keyvisions bpms
 =
 
-The components of the KeyVisions BPMS (Business Process Management System) project are: a web based BPMN process designer that includes semantics of business process data and roles, a BPMN to XPDL generator, an engine and analytics.
+KeyVisions BPMS (Business Process Management Symphony) is a SaaS project it includes an BPMN (Business Process Model and Notation) based designer with a XPDL (XML Process Definition Language) generator, a BPE (Business Process Engine) and a BPI (Business Process Interface).
+
+The BPI is build on KeyVisions ESITE
+
+KeyVisions BPMS icon is a plain circle, it simply represents a process start event.
 
 BPMN defines *events*, *activities*, *gateways*, *flows*, *data*, *artifacts* and *swimlanes*. The actions possible 
 
@@ -46,10 +50,6 @@ http://www.wikihow.com/Write-a-Business-Process-Document
 
 Technologies
 =
-This project is built on HTML, SVG, XML, CSS, javascript, node.js and JSON (versions available as of 11/09/2014). Raphael.js has been adopted to ease SVG development, however, while using it, its limitation have surfaced so probably it will be dropped in favor of bare DOM/SVG handling.
-
-Create SVG symbols associated to each BPMN element
-
+This project is built on HTML, SVG, XML, CSS, javascript, node.js and JSON.
 
 ---
-KeyVisions BPMS icon is a plain circle, it simply represents a process start event.
