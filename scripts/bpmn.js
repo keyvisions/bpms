@@ -19,7 +19,9 @@ function init() {
     }
     diagram = document.getElementById("diagram");
     diagram.symbols = diagram.getElementsByClassName("symbol");
+    diagram.rect = diagram.getBoundingClientRect();
     diagram.snap = 10;
+    diagram.history = [];
     selector = diagram.getElementById("selector");
     selection = diagram.getElementsByClassName("selected");
     touched = diagram.getElementsByClassName("touched");
@@ -38,9 +40,11 @@ function init() {
             e.target.classList.add("selected");
         var menu = document.getElementById("mnu_bpmn");
         menu.style.display = "block";
-        menu.style.left = e.clientX + "px";
-        menu.style.top = e.clientY + "px";
-        ["cmd_cut", "cmd_copy", "cmd_del", "cmd_prop"].forEach(function (id) {
+        menu.style.left = (e.clientX - diagram.rect.x) + "px";
+        menu.style.top = (e.clientY - diagram.rect.y) + "px";
+        document.getElementById("cmd_undo").classList[diagram.history.length === 0 ? "add" : "remove"]("disabled");
+        document.getElementById("cmd_redo").classList[diagram.history.length === 0 ? "add" : "remove"]("disabled");
+        ["cmd_cut", "cmd_copy", "cmd_del"].forEach(function (id) {
             document.getElementById(id).classList[selection.length === 0 ? "add" : "remove"]("disabled");
         });
         document.getElementById("cmd_all").classList[diagram.symbols.length === 0 ? "add" : "remove"]("disabled");
@@ -49,15 +53,15 @@ function init() {
     document.getElementById("mnu_bpmn").addEventListener("mousedown", function (e) {
         handleCommand(e.target.id, e);
     });
-    document.addEventListener("keyup", function(e) {
-        e.preventDefault();
+    document.addEventListener("keydown", function(e) {
         if (e.key === "Esc") {
             handleCommand("cmd_esc", e);
         } else {
             [].forEach.call(document.getElementById("mnu_bpmn").getElementsByTagName("span"), function (el) {
                if (el.textContent.toUpperCase() === (e.shiftKey ? "SHIFT+" : "") + (e.ctrlKey ? "CTRL+" : "") + e.key.toUpperCase()) {
-                   handleCommand(el.parentNode.id, e);
-                   return;
+                    e.preventDefault();
+                    handleCommand(el.parentNode.id, e);
+                    return;
                }
             });
         }
@@ -66,6 +70,10 @@ function init() {
     function handleCommand(cmd, e) {
         document.getElementById("mnu_bpmn").style.display = "none";
         switch (cmd) {
+            case "cmd_undo":
+                break;
+            case "cmd_redo":
+                break;
             case "cmd_esc":
                 [].forEach.call(diagram.symbols, function (el) {
                    el.classList.remove("selected");
@@ -85,19 +93,25 @@ function init() {
                    el.classList.add("selected");
                 });
                 break;
-            case "cmd_prop":
-                break;
             default:
-                createSymbol(e.target.id.substr(4), e.clientX, e.clientY);
+                createSymbol(e.target.id.substr(4), null, e.clientX - diagram.rect.x, e.clientY - diagram.rect.y);
         }
     }
 
-    function createSymbol(symbol, x, y) {
-        var obj = document.createElementNS(ns_svg, "use");
-        obj.setAttributeNS(ns_xlink, "href", "#" + symbol);
-        obj.setAttributes({ x: x, y: y });
-        obj.classList.add("symbol");
-        diagram.insertBefore(obj, selector);
+    function createSymbol(symbol, accessories, x, y) {
+        var obj = diagram.getElementById(symbol).cloneNode(true);
+        obj.xo = x, obj.yo = y;
+        obj.setAttributes({ class: "symbol", id: null, transform: "translate(" + x + " " + y + ")" });
+
+        // Add accessories: styles and components
+        if (Object.prototype.toString.call(accessories) === "[object Array]")
+            accessories.forEach(function (accesso) {
+                var obj_type = document.createElementNS(ns_svg, "use");
+                obj_type.setAttributeNS(ns_xlink, "href", "bpmn.svg#" + accesso);
+                obj.appendChild(obj_type);
+            });
+        
+        diagram.insertBefore(obj, symbol === "participant" ? diagram.firstChild : selector);
     }
     
     // Handle BP diagram
@@ -125,7 +139,7 @@ function init() {
                 selector.track = false;
             }
             
-            selector.xo = e.clientX - diagram.style.left, selector.yo = e.clientY - diagram.style.top;
+            selector.xo = e.clientX - diagram.rect.x, selector.yo = e.clientY - diagram.rect.y;
             selector.setAttributes({ x: selector.xo, y: selector.yo, width: 0, height: 0 });
             selector.drag = false;
         }
@@ -133,7 +147,7 @@ function init() {
     diagram.addEventListener("mousemove", function(e) {
         if (e.buttons & 1 === 1) {
             e.preventDefault();
-            var x = e.clientX, y = e.clientY;
+            var x = e.clientX - diagram.rect.x, y = e.clientY - diagram.rect.y;
 
             // Always select the symbol under the mouse
             var obj = getSymbol(e.target);
@@ -189,5 +203,9 @@ function init() {
     function getSymbol(obj) {
         for (; obj !== diagram && !obj.classList.contains("symbol"); obj = obj.parentNode);
         return (obj === diagram) ? null : obj;
+    }
+    
+    function getSymbolProp(symbol) {
+        
     }
 }

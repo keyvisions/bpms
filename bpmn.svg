@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="envelope" title="Message">
+        <path d="M-15,-10h30v20h-30Z"/>
+        <path d="M-15,-10l15,10l15,-10" fill="none"/>
+    </g>
+    <g id="exclusive" title="Data-based Exclusive">
+        <path d="M-15,-10h30v20h-30Z"/>
+    </g>
+    <g id="inclusive" title="Inclusive">
+        <path d="M-15,-10h30v20h-30Z"/>
+        <path d="M-15,-10l15,10l15,-10" fill="none"/>
+    </g>
+    <g id="parallel" title="Data-based inclusive">
+        <path d="M-15,-10h30v20h-30Z"/>
+        <path d="M-15,-10l15,10l15,-10" fill="none"/>
+    </g>
+    <g id="event" title="Event-Based">
+        <path d="M 16 6 L 16 9
+M 21 7 L 19.5 10
+M 25 11 L 22 12.5
+M 26 16 L 23 16
+M 25 21 L 22 19.5
+M 21 25 L 19.5 22
+M 16 26 L 16 23
+M 11 25 L 12.5 22
+M 7 21 L 10 19.5
+M 6 16 L 9 16
+M 7 11 L 10 12.5
+M 11 7 L 12.5 10
+M 18 9 L 16 16 L 20 16" transform="scale(2 2) translate(-16 -16)" stroke-width="1" />
+    </g>
+</svg>

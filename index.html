@@ -5,66 +5,98 @@
     <meta charset="utf-8">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <title>KeyVisions BPMS</title>
-    <link rel="stylesheet" type="text/css" href="/styles/bpmn.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/styles/bpmn.css" rel="stylesheet">
     <script src="/scripts/bpmn.js"></script>
     <script>
         window.addEventListener("load", init);
-
         function log(txt) {
-            document.getElementById("log").innerHTML += txt + "<br>";
+            document.getElementById("statusbar").innerHTML = txt;
         }
     </script>
 </head>
 
 <body>
-    <nav id="menu"></nav>
-    <svg id="diagram" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-        <defs>
-            <g class="mod_symbol" id="event" title="Event">
-                <circle cx="0" cy="0" r="25"/> 
-            </g>
-            <g class="mod_symbol" id="activity" title="Activity">
-                <rect x="-65" y="-40" width="130" height="80" rx="10" ry="10"/>
-            </g>
-            <g class="mod_symbol" id="gateway" title="Gateway">
-                <rect x="-20" y="-20" width="40" height="40" transform="rotate(45)"/>
-            </g>
-            <g class="mod_symbol" id="flow" title="Flow">
-                <path d="M0,0l200,0l0,-5l10,5l-10,5l0,-5"/>
-            </g>
-            <g class="mod_symbol" id="data" title="Data">
-                <path d="M10,-30l10,10v45h-40v-55h30v10h10"/>
-            </g>
-            <g class="mod_symbol" id="artifact" title="Artifact">
-                <path d="M20,-50h-20v100h20"/>
-                <!--div contenteditable="true">This is a description</div-->
-            </g>
-            <g class="mod_symbol" id="swimlane" title="Swimlane">
-                <path d="M0,-75h400v150h-400v-150Z"/>
-                <text x="20" y="0" transform="rotate(270,20,0)">Lane</text>
-            </g>
-        </defs>
-        <rect id="selector" x="0" y="0" width="0" height="0"/>
-    </svg>
-    <ul id="mnu_bpmn" class="menu">
-        <li class="disabled" id="cmd_undo">Undo<span>Ctrl+Z</span></li>
-        <li class="disabled" id="cmd_redo">Redo<span>Shift+Ctrl+Z</span></li>
-        <li class="separator"></li>
-        <li class="disabled" id="cmd_cut">Cut<span>Ctrl+X</span></li>
-        <li class="disabled" id="cmd_copy">Copy<span>Ctrl+C</span></li>
-        <li class="disabled" id="cmd_paste">Paste<span>Ctrl+V</span></li>
-        <li class="disabled" id="cmd_del">Delete<span>Del</span></li>
-        <li class="separator"></li>
-        <li class="disabled" id="cmd_all">Select all<span>Ctrl+A</span></li>
-        <li class="separator"></li>
-        <li>New<span style="font-size:0.8em">&#9654;</span>
-            <ul id="mnu_symbols" class="menu"></ul>
-        </li>
-        <li class="separator"></li>
-        <li class="disabled" id="cmd_prop"><b>Properties...</b></li>
-    </ul>
-    <div id="properties"></div>
-    <div id="log"></div>
+    <nav id="menubar">
+        <ul id="mnu_main" class="menu">
+            <li>File</li>
+            <li>Edit</li>
+            <li>View</li>
+            <li>Help</li>
+        </ul>
+    </nav>
+    <div id="sidebar">
+        <div class="">
+            <div class="caption">Processes</div>
+            <ul class="tree">
+                <li>Process 1</li>
+                <li>Process 2</li>
+                <li>Process 3</li>
+                <li>Process 4</li>
+            </ul>
+        </div>
+        <div class="">
+            <div class="caption">Properties</div>
+            <table class="properties">
+                <tbody>
+                    <tr><th>Type</th><td></td></tr>
+                    <tr><th>Subtype</th><td></td></tr>
+                    <tr><th>Name</th><td></td></tr>
+                    <tr><th>Description</th><td></td></tr>
+                    <tr><th>Position</th><td></td></tr>
+                    <tr><th>Roles</th><td></td></tr>
+                    <tr><th>Time</th><td></td></tr>
+                    <tr><th>Cost</th><td></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="split"></div>
+    <div id="main">
+        <svg id="diagram" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <defs>
+                <g class="mod_symbol" id="event" title="Event">
+                    <circle cx="0" cy="0" r="25"></circle>
+                </g>
+                <g class="mod_symbol" id="activity" title="Activity">
+                    <rect x="-65" y="-40" width="130" height="80" rx="10" ry="10"></rect>
+                </g>
+                <g class="mod_symbol" id="gateway" title="Gateway">
+                    <rect x="-20" y="-20" width="40" height="40" transform="rotate(45)"></rect>
+                </g>
+                <g class="mod_symbol" id="flow" title="Flow">
+                    <path d="M0,0l200,0l0,-5l10,5l-10,5l0,-5"></path>
+                </g>
+                <g class="mod_symbol" id="data" title="Data">
+                    <path d="M10,-30l10,10v45h-40v-55h30v10h10"></path>
+                </g>
+                <g class="mod_symbol" id="artifact" title="Artifact">
+                    <path d="M20,-50h-20v100h20"></path>
+                </g>
+                <g class="mod_symbol" id="participant" title="Participant">
+                    <path d="M0,-75h400v150h-400v-150Z"></path>
+                    <text x="20" y="0" transform="rotate(270,20,0)">Lane</text>
+                </g>
+            </defs>
+            <rect id="selector" x="0" y="0" width="0" height="0"></rect>
+            <ul id="mnu_bpmn" class="menu vertical">
+                <li class="disabled" id="cmd_undo">Undo<span>Ctrl+Z</span></li>
+                <li class="disabled" id="cmd_redo">Redo<span>Shift+Ctrl+Z</span></li>
+                <li class="separator"></li>
+                <li class="disabled" id="cmd_cut">Cut<span>Ctrl+X</span></li>
+                <li class="disabled" id="cmd_copy">Copy<span>Ctrl+C</span></li>
+                <li class="disabled" id="cmd_paste">Paste<span>Ctrl+V</span></li>
+                <li class="disabled" id="cmd_del">Delete<span>Del</span></li>
+                <li class="separator"></li>
+                <li class="disabled" id="cmd_all">Select all<span>Ctrl+A</span></li>
+                <li class="separator"></li>
+                <li>New<span style="font-size:0.8em">&#9654;</span>
+                    <ul id="mnu_symbols" class="menu vertical"></ul>
+                </li>
+            </ul>
+        </svg>
+    </div>
+    <div id="statusbar"></div>
 </body>
 
 </html>
